@@ -7,6 +7,23 @@ interface PostRequestBody {
 	};
 }
 
+// Helper functions to generate random values
+function generateRandomUserId(): string {
+	const timestamp = Date.now();
+	const randomNum = Math.floor(Math.random() * 1000);
+	return `user_${timestamp}_${randomNum}`;
+}
+
+function generateRandomEmail(): string {
+	const randomNum = Math.floor(Math.random() * 1000);
+	return `user${randomNum}@example.com`;
+}
+
+function generateRandomRollNumber(): string {
+	const randomNum = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+	return `ROLL${randomNum}`;
+}
+
 // Handler for GET requests
 export async function GET(request: NextRequest) {
 	return NextResponse.json(
@@ -67,9 +84,9 @@ export async function POST(request: NextRequest) {
 
 		const response = {
 			is_success: true,
-			user_id: "john_doe_17091999", // Replace with dynamic data as needed
-			email: "john@xyz.com", // Replace with dynamic data as needed
-			roll_number: "ABCD123", // Replace with dynamic data as needed
+			user_id: generateRandomUserId(), // Generate dynamic user ID
+			email: generateRandomEmail(), // Generate dynamic email
+			roll_number: generateRandomRollNumber(), // Generate dynamic roll number
 			numbers: numbers,
 			alphabets: alphabets,
 			highest_lowercase_alphabet: highestLowercaseAlphabet
