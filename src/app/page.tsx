@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 
 interface ResponseData {
 	is_success?: boolean;
@@ -11,6 +11,7 @@ interface ResponseData {
 	alphabets?: string[];
 	highest_lowercase_alphabet?: string[];
 	error?: string;
+	message?: string; // Added for handling messages from GET requests
 }
 
 export default function Home() {
@@ -32,9 +33,9 @@ export default function Home() {
 				body: JSON.stringify({ data: parsedData }), // Removed filter from request
 			});
 
-			if (!res.ok) {
-				throw new Error("Network response was not ok");
-			}
+			// if (!res.ok) {
+			// 	throw new Error("Network response was not ok");
+			// }
 
 			const result: ResponseData = await res.json();
 			setResponse(result);
@@ -61,13 +62,17 @@ export default function Home() {
 		}
 	};
 
-	useEffect(() => {
-		// Load data initially
-		handleGet();
-	}, []);
-
 	const renderResponse = () => {
 		if (!response) return null;
+
+		if (response.message) {
+			// Display message from GET request
+			return (
+				<pre className="whitespace-pre-wrap">
+					{JSON.stringify(response.message, null, 2)}
+				</pre>
+			);
+		}
 
 		switch (filter) {
 			case "numbers":
@@ -110,7 +115,7 @@ export default function Home() {
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
 			<h1 className="text-3xl font-bold mb-6">
-				Connected to bfhl route for get or post
+				Connected to bfhl route for GET or POST
 			</h1>
 
 			{/* POST Request Form */}
