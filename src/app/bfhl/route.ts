@@ -98,3 +98,4 @@ function areCapitalAlphabetsConsecutive(alphabets: string[]): boolean {
 	}
 	return false;
 }
+
