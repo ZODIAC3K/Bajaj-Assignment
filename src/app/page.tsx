@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 
 interface ResponseData {
 	is_success?: boolean;
@@ -24,13 +24,12 @@ export default function Home() {
 		try {
 			// Parse the JSON data input
 			const parsedData = JSON.parse(data);
-
 			const res = await fetch("/bfhl", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ data: parsedData, filter }),
+				body: JSON.stringify({ data: parsedData }), // Removed filter from request
 			});
 
 			if (!res.ok) {
@@ -59,6 +58,52 @@ export default function Home() {
 		} catch (err) {
 			setError((err as Error).message);
 			setResponse(null);
+		}
+	};
+
+	useEffect(() => {
+		// Load data initially
+		handleGet();
+	}, []);
+
+	const renderResponse = () => {
+		if (!response) return null;
+
+		switch (filter) {
+			case "numbers":
+				return (
+					response.numbers && (
+						<pre className="whitespace-pre-wrap">
+							{JSON.stringify(response.numbers, null, 2)}
+						</pre>
+					)
+				);
+			case "alphabets":
+				return (
+					response.alphabets && (
+						<pre className="whitespace-pre-wrap">
+							{JSON.stringify(response.alphabets, null, 2)}
+						</pre>
+					)
+				);
+			case "highest_lowercase_alphabet":
+				return (
+					response.highest_lowercase_alphabet && (
+						<pre className="whitespace-pre-wrap">
+							{JSON.stringify(
+								response.highest_lowercase_alphabet,
+								null,
+								2
+							)}
+						</pre>
+					)
+				);
+			default:
+				return (
+					<pre className="whitespace-pre-wrap">
+						{JSON.stringify(response, null, 2)}
+					</pre>
+				);
 		}
 	};
 
@@ -127,9 +172,7 @@ export default function Home() {
 			{response && (
 				<div className="mt-6 w-full max-w-lg bg-white p-4 rounded-lg shadow-md">
 					<h2 className="text-2xl font-semibold mb-4">Response:</h2>
-					<pre className="whitespace-pre-wrap">
-						{JSON.stringify(response, null, 2)}
-					</pre>
+					{renderResponse()}
 				</div>
 			)}
 

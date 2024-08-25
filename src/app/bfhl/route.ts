@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Define a type for the request body
 interface PostRequestBody {
-	data: any[]; // Allow any type in the array
+	data: {
+		data: any[]; // Nested data array
+	};
 }
 
 function areCapitalAlphabetsConsecutive(alphabets: string[]): boolean {
@@ -23,9 +25,9 @@ function areCapitalAlphabetsConsecutive(alphabets: string[]): boolean {
 export async function POST(request: NextRequest) {
 	try {
 		const body: PostRequestBody = await request.json();
-		const data = Array.isArray(body.data) ? body.data : []; // Ensure `data` is an array
+		const data = Array.isArray(body.data.data) ? body.data.data : []; // Extract nested data array
 
-		const numbers = data.filter((item) => !isNaN(Number(item)));
+		const numbers = data.filter((item) => !isNaN(Number(item))).map(String);
 		const alphabets = data.filter((item) => /^[a-zA-Z]$/.test(item));
 		const lowercaseAlphabets = alphabets.filter((item) =>
 			/^[a-z]+$/.test(item)
@@ -65,8 +67,4 @@ export async function POST(request: NextRequest) {
 			{ status: 500 }
 		);
 	}
-}
-
-export async function GET() {
-	return NextResponse.json({ operation_code: 1 });
 }
