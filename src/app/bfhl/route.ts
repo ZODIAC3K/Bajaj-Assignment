@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
 		}
 
 		const numbers = data.filter((item) => !isNaN(Number(item))).map(String);
-		const alphabets = data.filter((item) => /^[a-zA-Z]$/.test(item));
+		const alphabets = data.filter(
+			(item): item is string =>
+				typeof item === "string" && /^[a-zA-Z]$/.test(item)
+		);
 		const lowercaseAlphabets = alphabets.filter((item) =>
 			/^[a-z]$/.test(item)
 		);
@@ -98,4 +101,3 @@ function areCapitalAlphabetsConsecutive(alphabets: string[]): boolean {
 	}
 	return false;
 }
-
